@@ -1,0 +1,109 @@
+#!/usr/bin/env
+
+# The port for communication. Note that if you want to run multiple tasks on the same machine,
+# you need to specify different port numbers.
+export MASTER_PORT=6051
+
+log_dir=./refcocoplus_logs
+save_dir=./refcocoplus_checkpoints
+mkdir -p $log_dir $save_dir
+
+bpe_dir=../../utils/BPE
+user_dir=../../ofa_module
+
+data_dir=../../dataset/refcocoplus_data
+data=${data_dir}/refcocoplus_train.tsv,${data_dir}/refcocoplus_val.tsv
+restore_file=../../checkpoints/ofa_large.pt
+selected_cols=0,4,2,3
+
+task=refcoco
+arch=ofa_large
+criterion=adjust_label_smoothed_cross_entropy
+label_smoothing=0.1
+lr=3e-5
+max_epoch=5
+warmup_ratio=0.06
+batch_size=8
+update_freq=16
+resnet_drop_path_rate=0.0
+encoder_drop_path_rate=0.2
+decoder_drop_path_rate=0.2
+dropout=0.1
+attention_dropout=0.0
+max_src_length=80
+max_tgt_length=20
+num_bins=1000
+patch_image_size=512
+adapter_dim=128
+
+for max_epoch in {5,}; do
+  echo "max_epoch "${max_epoch}
+  for lr in {1e-4,}; do
+    echo "lr "${lr}
+    for patch_image_size in {480,}; do
+      echo "patch_image_size "${patch_image_size}
+
+      log_file=${log_dir}/"large_interpolation_"${max_epoch}"_"${lr}"_"${patch_image_size}".log"
+      save_path=${save_dir}/"large_interpolation_"${max_epoch}"_"${lr}"_"${patch_image_size}
+      mkdir -p $save_path
+
+      CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python3 -m torch.distributed.launch --nproc_per_node=8 --master_port=${MASTER_PORT} ../../train.py \
+          $data \
+          --selected-cols=${selected_cols} \
+          --bpe-dir=${bpe_dir} \
+          --user-dir=${user_dir} \
+          --restore-file=${restore_file} \
+          --reset-optimizer --reset-dataloader --reset-meters \
+          --save-dir=${save_path} \
+          --task=${task} \
+          --arch=${arch} \
+          --criterion=${criterion} \
+          --label-smoothing=${label_smoothing} \
+          --batch-size=${batch_size} \
+          --update-freq=${update_freq} \
+          --encoder-normalize-before \
+          --decoder-normalize-before \
+          --share-decoder-input-output-embed \
+          --share-all-embeddings \
+          --layernorm-embedding \
+          --patch-layernorm-embedding \
+          --code-layernorm-embedding \
+          --resnet-drop-path-rate=${resnet_drop_path_rate} \
+          --encoder-drop-path-rate=${encoder_drop_path_rate} \
+          --decoder-drop-path-rate=${decoder_drop_path_rate} \
+          --dropout=${dropout} \
+          --attention-dropout=${attention_dropout} \
+          --weight-decay=0.01 --optimizer=adam --adam-betas="(0.9,0.999)" --adam-eps=1e-08 --clip-norm=1.0 \
+          --lr-scheduler=polynomial_decay --lr=${lr} \
+          --max-epoch=${max_epoch} --warmup-ratio=${warmup_ratio} \
+          --log-format=simple --log-interval=10 \
+          --fixed-validation-seed=7 \
+          --seed=3407 \
+          --no-epoch-checkpoints --keep-best-checkpoints=1 \
+          --save-interval=1 --validate-interval=1 \
+          --save-interval-updates=500 --validate-interval-updates=500 \
+          --eval-acc \
+          --eval-args='{"beam":5,"min_len":4,"max_len_a":0,"max_len_b":4}' \
+          --best-checkpoint-metric=score --maximize-best-checkpoint-metric \
+          --max-src-length=${max_src_length} \
+          --max-tgt-length=${max_tgt_length} \
+          --add-type-embedding \
+          --find-unused-parameters \
+          --scale-attn \
+          --scale-fc \
+          --scale-heads \
+          --adapter \
+          --learnable-scale \
+          --adapter-dim=${adapter_dim} \
+          --adapter-num=2 \
+          --fp16 \
+          --fp16-scale-window=512 \
+          --combine-adapter-path=refcocoplus_checkpoints/large_100_1e-4_480_16/checkpoint_best.pt,refcocog_checkpoints/large_100_1e-4_480_16/checkpoint_best.pt \
+          --disable-entangle \
+          --num-bins=${num_bins} \
+          --patch-image-size=${patch_image_size} \
+          --num-workers=0 \
+          |& tee -a ${log_file}
+    done
+  done
+done

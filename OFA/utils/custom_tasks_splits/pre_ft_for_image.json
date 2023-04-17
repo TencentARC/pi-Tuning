@@ -1,0 +1,21 @@
+{
+  "dataset": {
+    "text":[
+            "rte",
+            "circa",
+            "superglue-rte",
+            "ade_corpus",
+            "glue-qnli",
+            "superglue-wic",
+            "ag_news",
+            "sst2",
+            "superglue-wsc",
+            "mnli",
+            "wnli",
+            "anli",
+            "superglue-cb",
+            "glue-qqp"],
+    "vqa": ["vqav2"],
+    "visual_entailment": ["snli_ve"]
+  }
+}

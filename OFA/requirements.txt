@@ -1,0 +1,10 @@
+-e ./fairseq/
+opencv-python
+timm
+ftfy==6.0.3
+tensorboardX==2.4.1
+pytorch_lightning==1.5.9
+einops
+datasets
+rouge_score
+loralib

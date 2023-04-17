@@ -1,0 +1,8 @@
+{
+  "dataset": {
+    "text": ["mnli", "sst2"],
+    "image": ["food101"],
+    "vqa": ["vqav2"],
+    "visual_entailment": ["snli_ve"]
+  }
+}
