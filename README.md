@@ -2,7 +2,7 @@
 
 > Chengyue Wu, Teng Wang, Yixiao Ge, Zeyu Lu, Ruisong Zhou, Ping Luo, Ying Shan
 
-This repo is the official implementation of the paper [$\pi$-Tuning: Transferring Multimodal Foundation Models with Optimal Multi-task Interpolation](https://arxiv.org/abs/2209.15280).
+This repo is the official implementation of the paper $\pi$-Tuning: Transferring Multimodal Foundation Models with Optimal Multi-task Interpolation.
 
 ![Overview](./imgs/overview.png)
 
