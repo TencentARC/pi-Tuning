@@ -563,20 +563,7 @@ class Trainer(object):
                                                adapter_meta_dict if 'adapter' in k}
                             model_dict.update(pretrained_dict)
                             self.model.load_state_dict(model_dict)
-                        if getattr(self.cfg.model, "adapter_fusion", False):
-                            for idx, layer in enumerate(self.model.encoder.layers):
-                                # layer.adapter_fusion_attention.query.apply(AttnFusion.init_bert_weights)
-                                # layer.adapter_fusion_attention.key.apply(AttnFusion.init_bert_weights)
-                                # layer.adapter_fusion_attention.value.apply(AttnFusion.init_bert_weights)
-                                embed_dim = layer.adapter_fusion_attention.embed_dim
-                                layer.adapter_fusion_attention.in_proj_weight.data[2*embed_dim:, :] = torch.zeros((embed_dim, embed_dim)).fill_diagonal_(1.0)
-                            for idx, layer in enumerate(self.model.decoder.layers):
-                                # layer.adapter_fusion_attention.query.apply(AttnFusion.init_bert_weights)
-                                # layer.adapter_fusion_attention.key.apply(AttnFusion.init_bert_weights)
-                                # layer.adapter_fusion_attention.value.apply(AttnFusion.init_bert_weights)
-                                embed_dim = layer.adapter_fusion_attention.embed_dim
-                                layer.adapter_fusion_attention.in_proj_weight.data[2*embed_dim:, :] = (torch.zeros((embed_dim, embed_dim))).fill_diagonal_(1.0)
-
+                        
                 if getattr(self.cfg.model, "encoder_prompt", False):
                     paths = getattr(self.cfg.model, "combine_prompt_path", "")
                     if paths != "":
