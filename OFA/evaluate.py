@@ -1,3 +1,5 @@
+# flake8: noqa
+
 #!/usr/bin/env python3 -u
 # Copyright 2022 The OFA-Sys Team. 
 # All rights reserved.

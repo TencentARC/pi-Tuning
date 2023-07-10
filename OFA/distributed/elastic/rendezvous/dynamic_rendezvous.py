@@ -1,3 +1,5 @@
+# flake8: noqa
+
 # Copyright (c) Facebook, Inc. and its affiliates.
 # All rights reserved.
 #

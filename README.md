@@ -2,7 +2,7 @@
 
 > Chengyue Wu, Teng Wang, Yixiao Ge, Zeyu Lu, Ruisong Zhou, Ping Luo, Ying Shan
 
-This repo is the official implementation of the paper $\pi$-Tuning: Transferring Multimodal Foundation Models with Optimal Multi-task Interpolation.
+This repo is the official implementation of the paper <a href="https://arxiv.org/abs/2304.14381"> $\pi$-Tuning: Transferring Multimodal Foundation Models with Optimal Multi-task Interpolation </a>.
 
 ![Overview](./imgs/overview.png)
 
@@ -48,7 +48,7 @@ We provide several demo scripts that have all the required parts for PETL traini
 Usage:
 ```bash
 cd OFA
-bash ./run_scripts/refcoco/train_refcoco_adapter_base.sh
+bash ./run_scripts/refcoco/train_refcoco_adapter.sh
 ```
 A few options of note:
 *   `--encoder-prompt` :: whether to insert prompts to the encoder
@@ -77,12 +77,12 @@ A few options of note:
 After obtaining the embedding of each task, use the [task_emb_post_process.ipynb](./OFA/results/task_emb_post_process.ipynb) to calculate the similarity of tasks.
 
 #### Step 3: Expert interpolation
-We provide a demo script to interpolate 3 experts (RefCOCO, RefCOCO+, RefCOCOg) for the target task, RefCOCO: `OFA/run_scripts/refcoco/train_refcoco_adapter_fusion_base.sh`
+We provide a demo script to interpolate 3 experts (RefCOCO, RefCOCO+, RefCOCOg) for the target task, RefCOCO: `OFA/run_scripts/refcoco/train_refcoco_adapter_interpolation.sh`
 
 Usage:
 ```bash
 cd OFA
-bash ./run_scripts/refcoco/train_refcoco_adapter_fusion_base.sh
+bash ./run_scripts/refcoco/train_refcoco_adapter_interpolation.sh
 ```
 
 #### Evaluation
