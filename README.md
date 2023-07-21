@@ -8,8 +8,9 @@ This repo is the official implementation of the paper <a href="https://arxiv.org
 
 ## News
 
-<!-- + **[2023.02]** Our paper is accepted to CVPR 2023. -->
-+ **[2023.04]** The official code is released.
++ **[2023.04]** Our paper is accepted by ICML 2023.
+
++ **[2023.07]** The official code is released.
 
 ## Main Results
 
